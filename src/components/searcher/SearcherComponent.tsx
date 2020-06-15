@@ -62,7 +62,6 @@ const SearcherComponent = () => {
 
     const searchProduct = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        
         var keyWords = datos.busqueda;
         var removedSpaces = keyWords.replace(/\s/g, '%20');
         window.location.href = '/compareProduct?searchKeywords=' + removedSpaces + '&category=' + categoriaSeleccionada;

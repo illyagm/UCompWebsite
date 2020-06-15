@@ -13,32 +13,42 @@ const Style = styled.div`
 `;
 
 const SearchResults = (props: any) => {
+
+    //Init component
+    useEffect(() => {
+        const getPlatforms = () => {
+            const querySearch = props.location.search;
+            const urlParams = new URLSearchParams(querySearch);
+            const category = urlParams.get('category');
+            const keywords = urlParams.get('searchKeywords');
+            setCategoria(''+category);
+            setKeywords(''+keywords);
+            getPlatformsByCategory(''+category).then(response => {
+                setPlatforms(response.data.sort(compare));
+            });
+        };
+        getPlatforms();
+        // eslint-disable-next-line
+    }, []);
+    //Platforms methods
     const platformService = new PlatformService();
     const [platforms, setPlatforms] = useState([]);
-    const { getAll } = platformService;
-    var querySearch = props.location.search;
-    const urlParams = new URLSearchParams(querySearch);
+    const [categoria, setCategoria] = useState('');
+    const [keywords, setKeywords] = useState('');
+    const { getPlatformsByCategory } = platformService;
+    //Order Alphabetically
     const compare = (a: any, b: any) => {
         const platformA = a.name.toUpperCase();
         const platformB = b.name.toUpperCase();
 
         let comparison = 0;
-        if (platformA > platformB){
+        if (platformA > platformB) {
             comparison = 1;
-        } else if(platformA < platformB){
+        } else if (platformA < platformB) {
             comparison = -1;
         }
         return comparison;
-    };  
-    useEffect(() => {
-       const getPlatforms = () => {
-        getAll().then(response => {
-            setPlatforms(response.data.sort(compare));
-          });
-       };
-       getPlatforms();
-       // eslint-disable-next-line
-    }, [querySearch]);
+    };
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [active, setActive] = useState(1);
@@ -50,7 +60,7 @@ const SearchResults = (props: any) => {
     const paginate = (pageNumber: React.SetStateAction<number>) => {
         setCurrentPage(pageNumber);
         setActive(pageNumber);
-    } 
+    }
     const truncate = (str: any) => {
         return str.length > 10 ? str.substring(0, 15) + "..." : str;
     }
@@ -63,32 +73,39 @@ const SearchResults = (props: any) => {
         window.location = url;
     }
     console.log(platforms);
+
     return (
         <div >
-        <BackNav/>
-        <Style>
-        <Container className="searchResults">
-        <h3>Categoria: {urlParams.get('category')}</h3>
-        {
-                    currentPlatforms.map((platform: IPlatform, key: number) => {
-                        return(
-                            <Style>
-                            <Card className="searchResults">
-                            <Card.Body>
-                            <Card.Header>{platform.name}</Card.Header>
-                            <Card.Text>
-                            <ListGroup.Item key={key}>{insertQueryToUrl(platform.url, urlParams.get('searchKeywords'))}</ListGroup.Item>
-                            </Card.Text>
-                            <Button variant="success" onClick={() => viewPage(insertQueryToUrl(platform.url, urlParams.get('searchKeywords')))}>Visit Page</Button>
-                            </Card.Body>
-                            </Card>
-                            </Style>
-                        )
-                    })
-        }
-        <PaginationPlatformsComponents platformsPerPage ={platformsPerPage} totalPlatforms={platforms.length} paginate={paginate} currentPage={currentPage} active={active}/>
-        </Container>
-        </Style>
+            <BackNav />
+            <Style>
+                <Container className="searchResults">
+                    <h3>Categoria: {categoria}</h3>
+                    {
+                        currentPlatforms.map((platform: IPlatform, key: number) => {
+                            return (
+                                platform.category.map(categoryName => {
+                                    if (categoryName === categoria) {
+                                        return (
+                                            <Style>
+                                            <Card className="searchResults">
+                                            <Card.Body>
+                                            <Card.Header>{platform.name}</Card.Header>
+                                            <Card.Text>
+                                            <ListGroup.Item key={key}>{insertQueryToUrl(platform.url, keywords)}</ListGroup.Item>
+                                            </Card.Text>
+                                            <Button variant="success" onClick={() => viewPage(insertQueryToUrl(platform.url, keywords))}>Visit Page</Button>
+                                            </Card.Body>
+                                            </Card>
+                                            </Style>
+                                        )
+                                    }
+                                })
+                            )
+                        })
+                    }
+                    <PaginationPlatformsComponents platformsPerPage={platformsPerPage} totalPlatforms={platforms.length} paginate={paginate} currentPage={currentPage} active={active} />
+                </Container>
+            </Style>
         </div>
     )
 }

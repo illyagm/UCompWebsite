@@ -4,6 +4,14 @@ export default class PlatformService implements IPlatformService {
     getAll(): Promise<any> {
         return axios.get('http://localhost:3000/platform/getPlatforms');
     }
+
+    getPlatformsByCategory(category: String): Promise<any> {
+        console.log('inside p service ' +category)
+        return axios.post("http://localhost:3000/platform/getPlatformsByCategory", {
+            category: category
+        })
+    }
+
     async insertPlatform(name: String, url: String): Promise<any> {
         try {
             const response = await axios.post("http://localhost:3000/platform/insertPlatform", {
