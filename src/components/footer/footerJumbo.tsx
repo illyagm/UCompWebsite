@@ -6,7 +6,12 @@ const Style = styled.div`
    .navbar{
         background-color: rgba(255,255,255, 0.7);
         font-weight: bold;
+        font-size: 0.7vw;
+        @media (max-width: 768px) {
+            font-size: 3vw;
+        }
    }
+  
 `;
 
 const Footer = () => {
