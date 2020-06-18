@@ -4,7 +4,7 @@ import BackNav from '../navbar/BackNav';
 import styled from 'styled-components';
 import { IPlatform } from '../../models/platform/IPlatform';
 import PlatformService from '../../services/PlatformService';
-import PaginationPlatformsComponents from './paginationPlatformsComponent';
+import NavPlatform from './NavPlatforms';
 
 const Style = styled.div`
     .searchResults{
@@ -16,14 +16,17 @@ const SearchResults = (props: any) => {
 
     //Init component
     useEffect(() => {
+        //first process !!!
+        //getting platforms by category passing category keyword form urlParams('url)
+        //setting search keyword and categories to the state
         const getPlatforms = () => {
             const querySearch = props.location.search;
             const urlParams = new URLSearchParams(querySearch);
             const category = urlParams.get('category');
             const keywords = urlParams.get('searchKeywords');
-            setCategoria(''+category);
-            setKeywords(''+keywords);
-            getPlatformsByCategory(''+category).then(response => {
+            setCategoria('' + category);
+            setKeywords('' + keywords);
+            getPlatformsByCategory('' + category).then(response => {
                 setPlatforms(response.data.sort(compare));
             });
         };
@@ -49,21 +52,10 @@ const SearchResults = (props: any) => {
         }
         return comparison;
     };
-    //Pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const [active, setActive] = useState(1);
-    const [platformsPerPage] = useState(4);
-    const indexOfLastPlatform = currentPage * platformsPerPage;
-    const indexOfFirstPost = indexOfLastPlatform - platformsPerPage;
-    const currentPlatforms = platforms.slice(indexOfFirstPost, indexOfLastPlatform);
-    //Change page
-    const paginate = (pageNumber: React.SetStateAction<number>) => {
-        setCurrentPage(pageNumber);
-        setActive(pageNumber);
-    }
     const truncate = (str: any) => {
         return str.length > 10 ? str.substring(0, 15) + "..." : str;
     }
+    //method that replaces 'QUERY' word from url to an actual keyword obtained from url 
     const insertQueryToUrl = (url: any, keyword: any) => {
         var urlDb = url;
         var replacedString = urlDb.replace("QUERY", keyword);
@@ -80,22 +72,24 @@ const SearchResults = (props: any) => {
             <Style>
                 <Container className="searchResults">
                     <h3>Categoria: {categoria}</h3>
+                    <p></p>
+                    <NavPlatform platforms={platforms}/>
                     {
-                        currentPlatforms.map((platform: IPlatform, key: number) => {
+                        platforms.map((platform: IPlatform, key: number) => {
                             return (
                                 platform.category.map(categoryName => {
                                     if (categoryName === categoria) {
                                         return (
                                             <Style>
-                                            <Card className="searchResults">
-                                            <Card.Body>
-                                            <Card.Header>{platform.name}</Card.Header>
-                                            <Card.Text>
-                                            <ListGroup.Item key={key}>{insertQueryToUrl(platform.url, keywords)}</ListGroup.Item>
-                                            </Card.Text>
-                                            <Button variant="success" onClick={() => viewPage(insertQueryToUrl(platform.url, keywords))}>Visit Page</Button>
-                                            </Card.Body>
-                                            </Card>
+                                                <Card className="searchResults">
+                                                    <Card.Body>
+                                                        <Card.Header>{platform.name}</Card.Header>
+                                                        <Card.Text>
+                                                            <ListGroup.Item key={key}>{insertQueryToUrl(platform.url, keywords)}</ListGroup.Item>
+                                                        </Card.Text>
+                                                        <Button variant="success" onClick={() => viewPage(insertQueryToUrl(platform.url, keywords))}>Visit Page</Button>
+                                                    </Card.Body>
+                                                </Card>
                                             </Style>
                                         )
                                     }
@@ -103,7 +97,6 @@ const SearchResults = (props: any) => {
                             )
                         })
                     }
-                    <PaginationPlatformsComponents platformsPerPage={platformsPerPage} totalPlatforms={platforms.length} paginate={paginate} currentPage={currentPage} active={active} />
                 </Container>
             </Style>
         </div>

@@ -88,6 +88,7 @@ const SearcherComponent = () => {
             })
         };
         getCat();
+    //eslint-disable-next-line
     }, [])
     return (
         <Style>
