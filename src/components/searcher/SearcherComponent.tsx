@@ -11,6 +11,7 @@ import NavComponent from '../navbar/NavComponent';
 import Footer from '../footer/footerJumbo';
 import CategoryService from '../../services/categoryService/CategoryService';
 import { ICategory } from '../../models/category/ICategory';
+
 const Style = styled.div`
     .background{
         color: black;
