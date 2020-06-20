@@ -5,6 +5,9 @@ import styled from 'styled-components';
 const NavStyle = styled.div`
     .navbar {
         background-color: rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        -moz-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
     }
 
     .navbar-brand, .navbar-nav .nav-link {
@@ -14,7 +17,7 @@ const NavStyle = styled.div`
             font-size: 5vw;
         }
        &:hover {
-           color: green;
+           color: #d400d4;
        } 
     }
 `;
@@ -27,7 +30,7 @@ const NavComponent = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto">
-                        <Nav.Item><Nav.Link href="/about">About Us</Nav.Link></Nav.Item>
+                        <Nav.Item><Nav.Link href="/about">Sobre Nosotros</Nav.Link></Nav.Item>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

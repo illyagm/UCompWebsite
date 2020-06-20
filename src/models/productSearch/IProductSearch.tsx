@@ -5,5 +5,5 @@ export interface IProductSearch {
     productUrl: String;
     productRating: String;
     numberOfRatings: String;
-    productPrice: Date;
+    productPrice: String;
 }

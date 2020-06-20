@@ -1,23 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Nav, Card, Button, Row, Col } from 'react-bootstrap';
+import { Container, Nav, Row, Col, Form } from 'react-bootstrap';
 import BackNav from '../navbar/BackNav';
 import styled from 'styled-components';
 import { IPlatform } from '../../models/platform/IPlatform';
-import { IProductSearch } from '../../models/productSearch/IProductSearch';
 import PlatformService from '../../services/PlatformService';
 import ProductSearchService from '../../services/productSearchService/ProductSearchService';
-
+import Products from './searchResultsProducts';
+import SideNav from './sideNav';
 const Style = styled.div`
+    
     .searchResults{
-        margin-top: 0.5vw;
+        margin-top: 0vw;
     }
+    .cardProduct{
+        background-color: rgba(0, 0, 0, 0.02);
+        -webkit-box-shadow: 7px 10px 15px -8px rgba(60,1,84,1);
+        -moz-box-shadow: 7px 10px 15px -8px rgba(60,1,84,1);
+        box-shadow: 7px 10px 15px -8px rgba(60,1,84,1);
+    }
+
     img {
         width: 20%;
         height: auto;
         float: right;
     }
     .product {
-        margin-top: 2vw;
+        margin-top: 2.5vw;
+    }
+    .link{
+        color:black;
+    }
+    .navResults{
+        border-color: black;
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    .general{
+        color: black;
+        height: auto;
+        width: auto;
+        background: white;
+    }
+    .customButton {
+        background-color: #78009f;
+        color: white;
+        border: none;
+    }
+    .customMarginTop{
+        margin-top: 2.5vw;
+    }
+    .platformsAccordion {
+        -webkit-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        -moz-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+    }
+    .filtersAccordion {
+        -webkit-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        -moz-box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+        box-shadow: 0px 6px 5px -2px rgba(0,0,0,0.33);
+    }
+    .checkMark{
+        font-type: bold;
     }
 `;
 
@@ -42,6 +84,8 @@ const SearchResults = (props: any) => {
     const [platformSearchId, setPlatformSearchId] = useState('_w5itz82oz');
     const [platformUrl, setPlatformUrl] = useState('https://www.amazon.es/s?k=QUERY&__mk_es_ES=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=nb_sb_noss_1');
 
+    const [loading, setLoading] = useState('true');
+
     //Order Alphabetically
     const compare = (a: any, b: any) => {
         const platformA = a.name.toUpperCase();
@@ -55,6 +99,19 @@ const SearchResults = (props: any) => {
         }
         return comparison;
     };
+    //Order price asc
+    const comparePriceAsc = (a: any, b: any) => {
+        const productA = parseInt(a.productPrice);
+        const productB = parseInt(b.productPrice);
+        return productA - productB;
+    }; 
+    //Order price desc
+    const comparePriceDesc = (a: any, b: any) => {
+        const productA = parseInt(a.productPrice);
+        const productB = parseInt(b.productPrice);
+        return productB - productA;
+    };   
+
     const truncate = (str: any) => {
         return str.length > 10 ? str.substring(0, 15) + "..." : str;
     }
@@ -64,24 +121,18 @@ const SearchResults = (props: any) => {
         var replacedString = urlDb.replace("QUERY", keyword);
         return replacedString;
     }
-    const viewPage = (url: Location) => {
-        window.location = url;
-    }
+
 
     const handleSearch = (platformUrlSearch: String, platformId: String) => {
         setPlatformSearchId('' + platformId);
         setPlatformUrl('' + platformUrlSearch);
-        console.log(platformUrlSearch);
+        //console.log(platformUrlSearch);
         //setProductsSearchId(''+id);
     }
 
-    const buyProduct = (productUrl: string) => {
-        window.location.href = productUrl;
-    }
-
-
     //Init component
     useEffect(() => {
+        console.log(loading);
         //first process !!!
         //getting platforms by category passing category keyword form urlParams('url)
         //setting search keyword and categories to the state
@@ -101,83 +152,42 @@ const SearchResults = (props: any) => {
                 setSearchResults(response.data);
             });
         }
-        console.log('UPDATING DATA!')
         getProductsSearch();
     }, [platformSearchId]);
 
 
-
-    console.log('Resultados busqueda ' + searchResults);
-
+    console.log(loading);
     return (
-        <div >
+        <div>
             <BackNav />
-            <Style>
-                <Container className="searchResults">
-                    <h3>Categoria: {categoria}</h3>
-                    <p></p>
-                    <Nav justify variant="tabs" defaultActiveKey="#">
-                        {
-                            platforms.map((platform: IPlatform, key: number) => {
-                                return (
-                                    platform.category.map(categoryName => {
-                                        if (categoryName === categoria) {
-                                            return (
-                                                <Nav.Item key={key} onClick={() => handleSearch(insertQueryToUrl(platform.url, keywords), platform.id)}>
-                                                    <Nav.Link href="#" eventKey={platform.id}>{platform.name}</Nav.Link>
-                                                </Nav.Item>
-                                            )
-                                        }
-                                    })
-                                )
-                            })
-                        }
-                    </Nav>
-
-                    {
-                        searchResults.map((product: IProductSearch, key: number) => {
-                            return (
-                                <div key={key} className="product">
-                                        <Card>
-                                            <Card.Body>
-                                                <Row>
-                                                    <Col sm>
-                                                    <Card.Text><b>{product.productName}</b></Card.Text>
-                                                    <Card.Text> {'Opiniones: ' + product.numberOfRatings}</Card.Text>
-                                                    <Card.Text>{product.productPrice}</Card.Text>
-                                                    <Button variant="primary" onClick={() => buyProduct('' + product.productUrl)}>Comprar</Button>
-                                                    </Col>
-                                                    <Col sm>
-                                                    <Card.Img variant="top" src={'' + product.imageUrl} />
-                                                    </Col>
-                                                </Row>
-                                            </Card.Body>
-                                        </Card>
-                                </div>
-                            )
-                        })
-                    }
-                </Container>
-            </Style>
+            <Container fluid>
+                <Style>
+                    <div className="general">
+                        <Row>
+                            <Col sm={2}>
+                                <SideNav 
+                                platforms={platforms} 
+                                handleSearch={handleSearch} 
+                                insertQueryToUrl={insertQueryToUrl} 
+                                categoria={categoria} 
+                                keywords={keywords} 
+                                comparePriceAsc={comparePriceAsc} 
+                                comparePriceDesc={comparePriceDesc}
+                                getProductsFromSearch={getProductsFromSearch}
+                                platformUrl={platformUrl}
+                                platformSearchId={platformSearchId}
+                                setSearchResults={setSearchResults}
+                                />
+                            </Col>
+                            <Col sm>
+                                <Products searchResults={searchResults} />
+                            </Col>
+                        </Row>
+                    </div>
+                </Style>
+            </Container>
         </div>
     )
 }
 
 export default SearchResults;
-
-/*
-
-return (
-                                            <Style>
-                                                <Card className="searchResults">
-                                                    <Card.Body>
-                                                        <Card.Header>{platform.name}</Card.Header>
-                                                        <Card.Text>
-                                                            <ListGroup.Item key={key}>{insertQueryToUrl(platform.url, keywords)}</ListGroup.Item>
-                                                        </Card.Text>
-                                                        <Button variant="success" onClick={() => viewPage(insertQueryToUrl(platform.url, keywords))}>Visit Page</Button>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Style>
-                                        )
-*/

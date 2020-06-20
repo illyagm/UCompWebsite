@@ -65,7 +65,10 @@ const SearcherComponent = () => {
         event.preventDefault();
         var keyWords = datos.busqueda;
         var removedSpaces = keyWords.replace(/\s/g, '%20');
-        window.location.href = '/compareProduct?searchKeywords=' + removedSpaces + '&category=' + categoriaSeleccionada;
+        window.open(
+            '/compareProduct?searchKeywords=' + removedSpaces + '&category=' + categoriaSeleccionada,
+            '_blank'
+        );
     }
     const [datos, setDatos] = useState({
         busqueda: ''
@@ -116,7 +119,7 @@ const SearcherComponent = () => {
                                     </Form.Control>
                                     <FormControl
                                         name="busqueda"
-                                        placeholder="Search a Product..."
+                                        placeholder="Nombre de producto..."
                                         aria-label="Recipient's username"
                                         aria-describedby="basic-addon2"
                                         onChange={handleInputChange}
