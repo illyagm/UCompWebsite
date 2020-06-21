@@ -14,7 +14,6 @@ export const MainComponent = () => {
                     <Route exact path="/" component={Searcher} />
                     <Route path="/about" component={HomeComponent} />
                     <Route path="/compareProduct" component={SearchResult}></Route>
-                    <Route path="/compareProduct/section1" component={SearchResult}></Route>
                     <Route component={NoMatchComponent} />
                 </Switch>
             </Router>

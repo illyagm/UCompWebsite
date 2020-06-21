@@ -5,8 +5,8 @@ import styled from 'styled-components';
 //import Background from '../../assets/_MG_8977-2.jpg';
 //import Background from '../../assets/_MG_0785.jpg';
 //import Background from '../../assets/_MG_9235.jpg';
-import Background from '../../assets/_MG_9475.jpg';
-//import Background from '../../assets/sd.jpg';
+//import Background from '../../assets/_MG_9475.jpg';
+import Background from '../../assets/sd.jpg';
 import NavComponent from '../navbar/NavComponent';
 import Footer from '../footer/footerJumbo';
 import CategoryService from '../../services/categoryService/CategoryService';
@@ -53,38 +53,13 @@ const Style = styled.div`
             font-size: 5vw;
         }
     }
+    
 `;
 
 const SearcherComponent = () => {
-    const categoryService = new CategoryService();
-    const { getCategories } = categoryService;
-    const [categories, setCategories] = useState([]);
-    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('electronica');
 
-    const searchProduct = async (event: { preventDefault: () => void; }) => {
-        event.preventDefault();
-        var keyWords = datos.busqueda;
-        var removedSpaces = keyWords.replace(/\s/g, '%20');
-        window.open(
-            '/compareProduct?searchKeywords=' + removedSpaces + '&category=' + categoriaSeleccionada,
-            '_blank'
-        );
-    }
-    const [datos, setDatos] = useState({
-        busqueda: ''
-    });
-
-    const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
-        setDatos({
-            ...datos,
-            [event.target.name]: event.target.value
-        })
-    };
-    const handleSelectChange = (event:any) => {
-        var categorySelected = event.target.value;
-        setCategoriaSeleccionada(categorySelected);
-        console.log(categorySelected);
-    }
+    //ON init
+    //gets all the categories and sets the state 'categories' (for mapping the select input)
     useEffect(() => {
         const getCat = () => {
             getCategories().then((response) => {
@@ -94,6 +69,45 @@ const SearcherComponent = () => {
         getCat();
     //eslint-disable-next-line
     }, [])
+
+    //service for getting the categories
+    const categoryService = new CategoryService();
+    const { getCategories } = categoryService;
+
+    //states of categories and selected category
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('electronica');
+
+    //states of the input search form
+    const [dataInput, setDataInput] = useState({
+        search: ''
+    });
+
+    //method that replaces 'QUERY' word from (url obtained from DB) by the keyword obtained from the input form. Opens new window with the children component, 
+    //passing params 'keyword' and 'category'inside the url
+    const searchProduct = async (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        var keyWords = dataInput.search;
+        var removedSpaces = keyWords.replace(/\s/g, '%20');
+        window.open(
+            '/compareProduct?searchKeywords=' + removedSpaces + '&category=' + selectedCategory,
+            '_blank'
+        );
+    }
+
+    //method for handling the input
+    const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
+        setDataInput({
+            ...dataInput,
+            [event.target.name]: event.target.value
+        })
+    };
+    //method for handling the select category
+    const handleSelectChange = (event:any) => {
+        var categorySelected = event.target.value;
+        setSelectedCategory(categorySelected);
+        console.log(categorySelected);
+    }
     return (
         <Style>
             <div className="background">
@@ -118,9 +132,9 @@ const SearcherComponent = () => {
                                     })}
                                     </Form.Control>
                                     <FormControl
-                                        name="busqueda"
+                                        name="search"
                                         placeholder="Nombre de producto..."
-                                        aria-label="Recipient's username"
+                                        aria-label="Search Input"
                                         aria-describedby="basic-addon2"
                                         onChange={handleInputChange}
                                         required

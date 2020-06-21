@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
-import { Accordion, Card, Form, Nav, ListGroup, Button } from 'react-bootstrap';
+import React from 'react';
+import { Accordion, Card, Form, ListGroup, Button } from 'react-bootstrap';
 import { IPlatform } from '../../models/platform/IPlatform';
 
 const SideNav = (props: any) => {
-    const { platforms, handleSearch, insertQueryToUrl, categoria, keywords, comparePriceDesc, comparePriceAsc, getProductsFromSearch, platformUrl, platformSearchId, setSearchResults} = props;
-    const [isActive, setIsActive] = useState(null);
-    
+    //props passed from searchResults component
+    const { platforms,
+            handleSearch, 
+            insertQueryToUrl, 
+            categorySeach,
+            keywords, 
+            comparePriceDesc, 
+            comparePriceAsc, 
+            getProductsFromSearch, 
+            platformUrl, 
+            platformSearchId, 
+            setSearchResults} = props;
+
+    //order getProducts prices by desc order
     const orderDesc = () => {
         const searchURL = insertQueryToUrl(platformUrl, keywords);
         const getProductsSearch = () => {
@@ -15,6 +26,7 @@ const SideNav = (props: any) => {
         }
         getProductsSearch();
     }
+    //order prices by asc order
     const orderAsc = () => {
         const searchURL = insertQueryToUrl(platformUrl, keywords);
         const getProductsSearch = () => {
@@ -29,7 +41,7 @@ const SideNav = (props: any) => {
             <Accordion defaultActiveKey="0" className="platformsAccordion">
                 <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="0">
-                        Plataformas
+                        <b>Plataformas</b>
                 </Accordion.Toggle>
                     <Accordion.Collapse eventKey="0">
 
@@ -39,7 +51,7 @@ const SideNav = (props: any) => {
                                 platforms.map((platform: IPlatform, key: number) => {
                                     return (
                                         platform.category.map((categoryName: any) => {
-                                            if (categoryName === categoria) {
+                                            if (categoryName === categorySeach) {
                                                 return (
                                                     <ListGroup.Item as="li">
                                                         <Form.Check
@@ -69,7 +81,7 @@ const SideNav = (props: any) => {
             <Accordion className="filtersAccordion">
                 <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="1">
-                        Ordenar por: (click aquí)
+                       <b> Ordenar por: (click aquí)</b>
                 </Accordion.Toggle>
                     <Accordion.Collapse eventKey="1">
                         <ListGroup as="ul">
